@@ -4,12 +4,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 
 import styles from './Search.module.scss';
+import { Row } from '../Table';
+import { FilterReducerAction } from 'src/utils/filterReducer';
 
 interface SearchProps {
-  store?: {};
-  updateStore?: (val) => void;
+  filterDispatch: React.Dispatch<FilterReducerAction>;
 }
-
 // OR
 
 //interface SearchProps {
@@ -19,11 +19,11 @@ interface SearchProps {
 
 // OR store can be global
 
-export const Search: FC<SearchProps> = props => {
+export const Search = ({ filterDispatch }: SearchProps) => {
   const [searchedValue, setSearchedValue] = useState('');
 
   const onChange = value => {
-    console.log(value); // for debugging
+    filterDispatch({ type: 'searchFilter', payload: value });
     setSearchedValue(value);
   };
 

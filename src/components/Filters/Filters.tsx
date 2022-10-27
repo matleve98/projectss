@@ -1,11 +1,12 @@
-import { useState, FC } from 'react';
+import { useState, FC, useEffect } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 
 import styles from './Filters.module.scss';
+import { Row } from '../Table';
+import { FilterReducerAction } from 'src/utils/filterReducer';
 
 interface FiltersProps {
-  store?: {};
-  updateStore?: (val) => void;
+  filterDispatch: React.Dispatch<FilterReducerAction>;
 }
 
 // OR
@@ -26,21 +27,31 @@ const OPTIONS = [
   },
 ];
 
-export const Filters: FC<FiltersProps> = props => {
-  const [selectedFilter, setSelectedFilter] = useState<string[]>([]);
+export const Filters = ({ filterDispatch }: FiltersProps) => {
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+  useEffect(() => {
+    const isWithoutPostsActive = selectedFilters.includes(OPTIONS[0].title);
+    const isMoreThen100PostsActive = selectedFilters.includes(OPTIONS[1].title);
+    console.log('isWithoutPostsActive', isWithoutPostsActive);
+    console.log('isMoreThan100PostsActive', isMoreThen100PostsActive);
+    filterDispatch({
+      type: 'moreThan100Posts',
+      payload: isMoreThen100PostsActive,
+    });
+    filterDispatch({ type: 'withoutPosts', payload: isWithoutPostsActive });
+  }, [selectedFilters]);
 
   const onChange = ({ title }) => {
-    console.log(title); // for debugging
-
     let updatedFilters;
 
-    if (selectedFilter.find(filter => filter === title)) {
-      updatedFilters = selectedFilter.filter(filter => filter !== title);
+    if (selectedFilters.find(filter => filter === title)) {
+      updatedFilters = selectedFilters.filter(filter => filter !== title);
     } else {
-      updatedFilters = [...selectedFilter, title];
+      updatedFilters = [...selectedFilters, title];
     }
 
-    setSelectedFilter(updatedFilters);
+    setSelectedFilters(updatedFilters);
   };
 
   return (
@@ -54,12 +65,14 @@ export const Filters: FC<FiltersProps> = props => {
             onClick={() => onChange(option)}
           >
             <Checkbox
-              checked={!!selectedFilter.find(filter => filter === option.title)}
+              checked={
+                !!selectedFilters.find(filter => filter === option.title)
+              }
               value={option.title}
               size="small"
               color="primary"
               onChange={() => onChange(option)}
-            />{' '}
+            />
             {option.title}
           </li>
         ))}
