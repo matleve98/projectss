@@ -33,8 +33,7 @@ export const Filters = ({ filterDispatch }: FiltersProps) => {
   useEffect(() => {
     const isWithoutPostsActive = selectedFilters.includes(OPTIONS[0].title);
     const isMoreThen100PostsActive = selectedFilters.includes(OPTIONS[1].title);
-    console.log('isWithoutPostsActive', isWithoutPostsActive);
-    console.log('isMoreThan100PostsActive', isMoreThen100PostsActive);
+
     filterDispatch({
       type: 'moreThan100Posts',
       payload: isMoreThen100PostsActive,

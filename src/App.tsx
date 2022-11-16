@@ -30,12 +30,10 @@ export const App: FC = () => {
   }, []);
 
   useEffect(() => {
-    // const activeFilters: Array<FilterReducerAction['type']> = Object.values(filters).filter(filter => filter[1] ).map(filter => filter[0]);
     if (!filters) {
       return;
     }
-    const { asc, desc, moreThan100Posts, searchFilter, withoutPosts } = filters;
-    console.log(filters);
+    const { moreThan100Posts, searchFilter, withoutPosts } = filters;
 
     if (moreThan100Posts || withoutPosts || searchFilter) {
       setActiveUsers(
