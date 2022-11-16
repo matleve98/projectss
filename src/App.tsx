@@ -14,16 +14,12 @@ import {
   initialFilterState,
 } from './utils/filterReducer';
 
-// mockedData has to be replaced with parsed Promises’ data
-// const mockedData: Row[] = rows.data;
-
 export const App: FC = () => {
   const [data, setData] = useState<Row[]>();
   const [activeUsers, setActiveUsers] = useState<Row[]>([]);
   const [filters, dispatch] = useReducer(filterReducer, initialFilterState);
 
   useEffect(() => {
-    // fetching data from API
     Promise.all([getImages(), getUsers(), getAccounts()]).then(
       ([images, users, accounts]: [Image[], User[], Account[]]) => {
         const userData = usersDataConverter({ accounts, images, users });
@@ -38,16 +34,9 @@ export const App: FC = () => {
     if (!filters) {
       return;
     }
-    console.log(filters);
     const { asc, desc, moreThan100Posts, searchFilter, withoutPosts } = filters;
-    if (asc) {
-      setActiveUsers(activeUsers.sort());
-    }
-    if (desc) {
-      setActiveUsers(
-        activeUsers.sort((a, b) => a.lastPayments - b.lastPayments)
-      );
-    }
+    console.log(filters);
+
     if (moreThan100Posts || withoutPosts || searchFilter) {
       setActiveUsers(
         data.filter(user => {
@@ -73,13 +62,38 @@ export const App: FC = () => {
     }
   }, [filters]);
 
+  useEffect(() => {
+    const { asc, desc } = filters;
+    if (desc) {
+      setActiveUsers(
+        activeUsers
+          .slice()
+          .sort(
+            (prevUser, nextUser) =>
+              nextUser.lastPayments - prevUser.lastPayments
+          )
+      );
+    }
+
+    if (asc) {
+      setActiveUsers(
+        activeUsers
+          .slice()
+          .sort(
+            (prevUser, nextUser) =>
+              prevUser.lastPayments - nextUser.lastPayments
+          )
+      );
+    }
+  }, [filters.asc, filters.desc]);
+
   return (
     <StyledEngineProvider injectFirst>
       <div className="App">
         <div className={styles.container}>
           <div className={styles.sortFilterContainer}>
             <Filters filterDispatch={dispatch} />
-            <Sort />
+            <Sort filterDispatch={dispatch} />
           </div>
           <Search filterDispatch={dispatch} />
         </div>

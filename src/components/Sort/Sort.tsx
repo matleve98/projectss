@@ -6,24 +6,22 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
 import styles from './Sort.module.scss';
+import { FilterReducerAction } from 'src/utils/filterReducer';
 
 interface SortProps {
-  store?: {};
-  updateStore?: (val) => void;
+  filterDispatch: React.Dispatch<FilterReducerAction>;
 }
 
-// OR
-
-//interface SortProps {
-//  selected?: {};
-//  updateSelected?: (val) => void;
-//}
-
-// OR store can be global
-
-export const Sort: FC<SortProps> = props => {
+export const Sort: FC<SortProps> = ({ filterDispatch }) => {
   const handleChange = value => {
-    console.log(value); // for debugging
+    if (value === 'asc') {
+      filterDispatch({ type: 'asc', payload: true });
+      filterDispatch({ type: 'desc', payload: false });
+    }
+    if (value === 'desc') {
+      filterDispatch({ type: 'asc', payload: false });
+      filterDispatch({ type: 'desc', payload: true });
+    }
   };
 
   return (
